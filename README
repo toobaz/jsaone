@@ -1,12 +1,12 @@
-====== jsaone ======
+====== What is jsaone? ======
 
-This is a tiny wrapper around the standard json library, allowing to read a json file incrementally.
+This is a tiny wrapper around the json module in the Python standard library, allowing to read a json file incrementally.
 
 This can be useful for
   * parsing json streams without waiting for the end of the transmission,
   * parsing very big json objects without wasting RAM for the json representation itself.
 
-It is an alternative to [[https://pypi.python.org/pypi/ijson/|ijson]] (written when I did not know ijson existed).
+It is an alternative to [[https://pypi.python.org/pypi/ijson/|ijson]] (written when I did not know ijson existed, but in the end more efficient).
 
 === Efficiency ===
 
@@ -25,7 +25,7 @@ Those results were obtained with the script "**tests/json_load_test.py**".
 
 Clearly those numbers are affected by the speed of the CPU and of the medium/stream.
 In general the faster the CPU (compared to the storage medium/stream), the
-fastest will be the standard json compared to incremental ones (including
+faster will be the standard json compared to incremental ones (including
 jsaone).
 
 === Why "jsaone" ===
@@ -38,17 +38,30 @@ Because it sounds similar to "json"... but the Saône is a (large) stream.
   * [[http://pypi.python.org/pypi/simplejson/|simplejson]] (Python 2.5 only)
   * for speedup: [[http://cython.org|cython]] (at build time)
 
-=== Installation ===
+=== Installing ===
 
-The simplest way to try jsaone is to extract it/clone the git repo, then move in the "jsaone" folder and give the command
+  - If you use Debian or a derivative (such as Ubuntu or Mint), you can simply use the packages provided above.
+  - **jsaone** is on pypi, so you can install it with //pip install jsaone//
+  - you can extract/clone the git repo, then move in the "jsaone" folder and give the command
 
   python setup.py build_ext --inplace
 
-and then import the module jsaone from your code.
 
-=== Bugs and enhancements ===
+=== Usage ===
 
-You can write me - <me@pietrobattiston.it> - ideally pointing to a git branch solving the issue/providing an enhancement.
+
+  import jsaone
+  with open('/path/to/my/file.json') as f:
+      gen = jsaone.load(f)
+      for i in gen:
+          ...
+
+=== Development ===
+
+You can browse the git repo [[http://www.pietrobattiston.it/gitweb?p=jsaone.git|here]] or clone with
+  git clone git://pietrobattiston.it/jsaone
+
+For bugs and enhancements, just write me - <me@pietrobattiston.it> - ideally pointing to a git branch solving the issue/providing an enhancement.
 
 === License ===
 
