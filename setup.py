@@ -7,7 +7,7 @@ with open('README') as file:
 
 setup(
   name = 'jsaone',
-  version='0.1',
+  version='0.1.1',
   license='GPL',
   author='Pietro Battiston',
   author_email='me@pietrobattiston.it',
