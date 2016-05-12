@@ -59,8 +59,9 @@ def load(file_obj):
     while state != FINISHED:
         if cursor == len(buf)-1:
             new_buf = file_obj.read(BUF_LEN)
-            assert(new_buf), ("Premature end (current processing buffer ends"
-                              " with '%s')" % buf)
+            if not new_buf:
+                raise ValueError("Premature end (current processing buffer "
+                                 "ends with '%s')" % buf)
             
             buf += new_buf
 
@@ -143,7 +144,8 @@ def load(file_obj):
         # Unless there are whitespaces and such, all "non-content" states last
         # just 1 char.
         if state == old_state and not state in (INSIDE_KEY, INSIDE_VALUE):
-            assert(char in STRIP_CHARS), ("Found char '%s' in %s while"
+            if not char in STRIP_CHARS:
+                raise ValueError("Found char '%s' in %s while"
                               " parsing '%s'" % (char, STATES[old_state], buf))
         
         _debug("... to state %s" % (STATES[state]))
