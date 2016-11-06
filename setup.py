@@ -1,9 +1,9 @@
 from distutils.core import setup
 from Cython.Build import cythonize
+import codecs
 
-
-with open('README') as file:
-    long_description = file.read()
+with codecs.open('README', encoding='utf8') as fin:
+    long_description = fin.read()
 
 setup(
   name = 'jsaone',
