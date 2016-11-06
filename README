@@ -46,7 +46,9 @@ Because it sounds similar to "json"... but the Saône is a (large) stream.
   - **jsaone** is on pypi, so you can install it with //pip install jsaone//
   - you can extract/clone the git repo, then move in the "jsaone" folder and give the command
 
-  python setup.py build_ext --inplace
+  python3 setup.py build_ext --inplace
+
+(replace "**python3**" with "**python**" if you are using Python 2).
 
 
 === Usage ===
@@ -65,6 +67,8 @@ You can browse the git repo [[http://www.pietrobattiston.it/gitweb?p=jsaone.git|
 
 For bugs and enhancements, just write me - <me@pietrobattiston.it> - ideally pointing to a git branch solving the issue/providing an enhancement.
 
+Jsaone should be able to parse any compliant json string... so if you find one on which it fails, please let me know!
+
 === License ===
 
-Released under the GPL 3.
+Released under the GPL 3. Feel free to contact me if this is a problem for you (and GPL 2 is not).
