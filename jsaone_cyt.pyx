@@ -183,10 +183,11 @@ def load(file_obj):
         
         # Unless there are whitespaces and such, all "non-content" states last
         # just 1 char.
-        if state == old_state and not state in (INSIDE_KEY,
-                                                INSIDE_DELIMITED_VALUE,
-                                                INSIDE_NON_DELIMITED_VALUE):
-            assert(char in STRIP_CHARS), ("Found char '%s' in %s while"
+        assert(state != old_state
+            or state in (INSIDE_KEY,
+                         INSIDE_DELIMITED_VALUE,
+                         INSIDE_NON_DELIMITED_VALUE)
+            or char in STRIP_CHARS), ("Found char '%s' in %s while"
                               " parsing '%s'" % (char, STATES[old_state], buf))
         
 #        _debug("... to state %s" % (STATES[state]))
