@@ -14,7 +14,7 @@ streams without waiting for the end of their transmission.
 
 from __future__ import print_function
 
-__version__ = '0.1.1'
+__version__ = '0.2'
 
 try:
     from jsaone_cyt import load

@@ -1,3 +1,7 @@
+jsaone 0.2, 2016-11-06
+  * Support for non-delimited values (thanks, Hua Shao!)
+  * setup.py: support Python 3 on ASCII locales
+
 jsaone 0.1.1, 2016-04-07
   * Documentation fixes
 

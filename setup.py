@@ -7,7 +7,7 @@ with codecs.open('README', encoding='utf8') as fin:
 
 setup(
   name = 'jsaone',
-  version='0.1.1',
+  version='0.2',
   license='GPL',
   author='Pietro Battiston',
   author_email='me@pietrobattiston.it',
