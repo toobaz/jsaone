@@ -25,7 +25,8 @@ STATES_LIST = ["STARTING",
                "INSIDE_KEY",
                "AFTER_KEY",
                "BEFORE_VALUE",
-               "INSIDE_VALUE",
+               "INSIDE_DELIMITED_VALUE",
+               "INSIDE_NON_DELIMITED_VALUE",
                "AFTER_VALUE",
                "FINISHED"]
 
@@ -39,6 +40,17 @@ def _debug(*args, **kwargs):
         print(*args, **kwargs)
     else:
         pass
+
+def nested_json(buf, obj_start, cursor):
+    json_chunk = "{%s}" % buf[obj_start:cursor]
+    _debug("Parse key/value pair '%s'" % json_chunk)
+    
+    try:
+        json_obj = json.loads(json_chunk)
+    except:
+        print("Problem with key/value pair '%s'" % json_chunk)
+        raise
+    return json_obj.popitem()
 
 def load(file_obj):
     """
@@ -98,10 +110,33 @@ def load(file_obj):
         
         elif state == BEFORE_VALUE:
             if char in DELIMITERS:
-                state = INSIDE_VALUE
+                state = INSIDE_DELIMITED_VALUE
                 open_delimiters.append(char)
+            elif char not in STRIP_CHARS:
+                state = INSIDE_NON_DELIMITED_VALUE
         
-        elif state == INSIDE_VALUE:
+        elif state == INSIDE_NON_DELIMITED_VALUE:
+            # Non delimited values can be
+            # - numbers
+            # - "true"
+            # - "false"
+            # - "null"
+            # in any case, they can't contain spaces or delimiters.
+            if char in STRIP_CHARS:
+                state = AFTER_VALUE
+            elif char == '}':
+                state = FINISHED
+            elif char == ',':
+                state = BEFORE_KEY
+            
+            if state != INSIDE_NON_DELIMITED_VALUE:
+                # OK, finished parsing value
+                yield nested_json(buf, obj_start, cursor)
+                del obj_start
+                buf = buf[cursor:]
+                cursor = 0
+        
+        elif state == INSIDE_DELIMITED_VALUE:
             if open_delimiters[-1] == '"':
                 if escape:
                     escape = False
@@ -112,20 +147,13 @@ def load(file_obj):
                 elif char != '"':
                     continue
                 
-            # Since we are INSIDE_VALUE, there is at least an open delimiter.
+            # Since we are INSIDE_DELIMITED_VALUE, there is at least an open
+            # delimiter.
             if char == DELIMITERS[open_delimiters[-1]]:
                 open_delimiters.pop()
                 if not open_delimiters:
                     state = AFTER_VALUE
-                    json_chunk = "{%s}" % buf[obj_start:cursor+1]
-                    _debug("Parse key/value pair '%s'" % json_chunk)
-                    
-                    try:
-                        json_obj = json.loads(json_chunk)
-                    except:
-                        print("Problem with key/value pair '%s'" % json_chunk)
-                        raise
-                    yield json_obj.popitem()
+                    yield nested_json(buf, obj_start, cursor+1)
                     del obj_start
                     buf = buf[cursor:]
                     cursor = 0
@@ -143,9 +171,10 @@ def load(file_obj):
         
         # Unless there are whitespaces and such, all "non-content" states last
         # just 1 char.
-        if state == old_state and not state in (INSIDE_KEY, INSIDE_VALUE):
-            if not char in STRIP_CHARS:
-                raise ValueError("Found char '%s' in %s while"
+        if state == old_state and not state in (INSIDE_KEY,
+                                                INSIDE_DELIMITED_VALUE,
+                                                INSIDE_NON_DELIMITED_VALUE):
+            assert(char in STRIP_CHARS), ("Found char '%s' in %s while"
                               " parsing '%s'" % (char, STATES[old_state], buf))
         
         _debug("... to state %s" % (STATES[state]))
